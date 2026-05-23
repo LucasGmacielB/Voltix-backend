@@ -1,0 +1,27 @@
+package com.voltix.backend.controller;
+
+import com.voltix.backend.dto.auth.LoginRequestDTO;
+import com.voltix.backend.dto.auth.LoginResponseDTO;
+import com.voltix.backend.dto.auth.RegisterRequestDTO;
+import com.voltix.backend.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public LoginResponseDTO register(@RequestBody RegisterRequestDTO dto) {
+        return authService.register(dto);
+    }
+
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO dto) {
+        return authService.login(dto);
+    }
+}

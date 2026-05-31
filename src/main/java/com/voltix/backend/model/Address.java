@@ -23,6 +23,10 @@ public class Address {
     private String state;
 
     private String zipCode;
+    
+    private String number;
+
+    private String neighborhood;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

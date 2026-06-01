@@ -27,11 +27,6 @@ public class AddressController {
     public List<Address> findAll() {
         return addressService.findAll();
     }
-    
-    @GetMapping("/{id}")
-    public List<Address> findById() {
-        return addressService.findAll();
-    }
 
     @GetMapping("/{id}")
     public Address findById(@PathVariable Long id) {

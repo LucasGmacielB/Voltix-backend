@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+target
+build
+dist
+.env
+.env.*
+!.env.example
+Dockerfile
+README.md

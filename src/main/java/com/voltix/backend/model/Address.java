@@ -3,6 +3,8 @@ package com.voltix.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "addresses")
 @Getter
@@ -30,5 +32,6 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+  @JsonBackReference
     private User user;
 }

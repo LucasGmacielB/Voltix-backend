@@ -17,13 +17,9 @@ public class AddressService {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
 
-    public List<Address> findByUserEmail(String email) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        return addressRepository.findByUser_Id(user.getId());
-    }
+  public List<Address> findAll() {
+    return addressRepository.findAll();
+}
 
     public Address create(AddressDTO dto) {
 

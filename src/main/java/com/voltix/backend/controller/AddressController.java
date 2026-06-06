@@ -23,11 +23,8 @@ public class AddressController {
     }
 
     @GetMapping
-    public List<Address> findAll(Authentication authentication) {
-
-        String email = authentication.getName();
-
-        return addressService.findByUserEmail(email);
+    public List<Address> findAll() {
+        return addressService.findAll();
     }
 
     @GetMapping("/{id}")

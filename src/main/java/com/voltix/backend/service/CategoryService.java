@@ -3,18 +3,16 @@ package com.voltix.backend.service;
 import com.voltix.backend.dto.auth.CategoryDTO;
 import com.voltix.backend.model.Category;
 import com.voltix.backend.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService{
 
     private final CategoryRepository categoryRepository;
-
-    public CategoryService(CategoryRepository categoryRepository){
-        this.categoryRepository = categoryRepository;
-    }
 
     public List<CategoryDTO> findAll(){
         return categoryRepository.findAll()
@@ -23,7 +21,7 @@ public class CategoryService{
                 .toList();
     }
 
-    public CategoryDTO findById(UUID id){
+    public CategoryDTO findById(Long id){
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
@@ -44,7 +42,7 @@ public class CategoryService{
         return toDTO(savedCategory);
     }
 
-    public CategoryDTO update(UUID id, CategoryDTO categoryDTO){
+    public CategoryDTO update(Long id, CategoryDTO categoryDTO){
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
@@ -56,7 +54,7 @@ public class CategoryService{
         return toDTO(updatedCategory);
     }
 
-    public void delete(UUID id){
+    public void delete(Long id){
         if (!categoryRepository.existsById(id)){
             throw new RuntimeException("Categoria não encontrada");
         }

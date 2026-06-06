@@ -16,7 +16,7 @@ public class OrderItem {
     private Long id;
 
     private Integer quantity;
-    private BigDecimal price;
+    private BigDecimal unitPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)

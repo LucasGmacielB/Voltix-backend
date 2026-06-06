@@ -5,28 +5,29 @@ import com.voltix.backend.model.Address;
 import com.voltix.backend.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/addresses")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class AddressController {
-    
+
     private final AddressService addressService;
 
     @PostMapping
-
-     public Address create(@RequestBody AddressDTO dto) {
+    public Address create(@RequestBody AddressDTO dto) {
         return addressService.create(dto);
     }
 
     @GetMapping
-    public List<Address> findAll() {
-        return addressService.findAll();
+    public List<Address> findAll(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return addressService.findByUserEmail(email);
     }
 
     @GetMapping("/{id}")
@@ -36,11 +37,11 @@ public class AddressController {
 
     @PutMapping("/{id}")
     public Address update(@PathVariable Long id, @RequestBody AddressDTO dto) {
-    return addressService.update(id, dto);
+        return addressService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         addressService.delete(id);
-}
+    }
 }

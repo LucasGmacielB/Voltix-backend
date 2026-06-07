@@ -9,12 +9,25 @@ import com.voltix.backend.dto.auth.ResetPasswordRequestDTO;
 import com.voltix.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import com.voltix.backend.dto.auth.UpdateProfileDTO;
+import com.voltix.backend.dto.auth.ChangePasswordDTO;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
+
+    @PutMapping("/profile")
+public LoginResponseDTO updateProfile(  @RequestBody UpdateProfileDTO dto) {
+    return authService.updateProfile(dto);
+}
+
+    @PutMapping("/password")
+    public MessageResponseDTO changePassword(@RequestBody ChangePasswordDTO dto) {
+        authService.changePassword(dto);
+        return new MessageResponseDTO("Senha alterada com sucesso.");
+    }
 
     private final AuthService authService;
 

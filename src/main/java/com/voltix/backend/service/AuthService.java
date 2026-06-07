@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.voltix.backend.dto.auth.UpdateProfileDTO;
+import com.voltix.backend.dto.auth.ChangePasswordDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -105,4 +107,42 @@ public class AuthService {
         resetToken.setUsedAt(LocalDateTime.now());
         passwordResetTokenRepository.save(resetToken);
     }
+
+    public LoginResponseDTO updateProfile(UpdateProfileDTO dto) {
+
+    User user = userRepository.findById(dto.id())
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+    user.setName(dto.name());
+    user.setEmail(dto.email());
+
+    userRepository.save(user);
+
+    return new LoginResponseDTO(
+            user.getId(),
+            user.getName(),
+            user.getEmail()
+    );
+}
+
+public void changePassword(ChangePasswordDTO dto) {
+
+    User user = userRepository.findById(dto.id())
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+    boolean valid = passwordEncoder.matches(
+            dto.currentPassword(),
+            user.getPassword()
+    );
+
+    if (!valid) {
+        throw new RuntimeException("Senha atual incorreta.");
+    }
+
+    user.setPassword(
+            passwordEncoder.encode(dto.newPassword())
+    );
+
+    userRepository.save(user);
+}
 }

@@ -6,7 +6,10 @@ import com.voltix.backend.model.User;
 import com.voltix.backend.repository.AddressRepository;
 import com.voltix.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -17,21 +20,15 @@ public class AddressService {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
 
-    public List<Address> findByUserEmail(String email) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        return addressRepository.findByUser_Id(user.getId());
+    public List<Address> findAll(Authentication authentication) {
+        User user = getAuthenticatedUser(authentication);
+        return addressRepository.findByUserId(user.getId());
     }
 
-    public Address create(AddressDTO dto) {
-
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public Address create(AddressDTO dto, Authentication authentication) {
+        User user = getAuthenticatedUser(authentication);
 
         Address address = new Address();
-
         address.setStreet(dto.getStreet());
         address.setNumber(dto.getNumber());
         address.setNeighborhood(dto.getNeighborhood());
@@ -43,14 +40,14 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public Address findById(Long id) {
-        return addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+    public Address findById(Long id, Authentication authentication) {
+        User user = getAuthenticatedUser(authentication);
+        return findByIdAndUser(id, user.getId());
     }
 
-    public Address update(Long id, AddressDTO dto) {
-
-        Address address = findById(id);
+    public Address update(Long id, AddressDTO dto, Authentication authentication) {
+        User user = getAuthenticatedUser(authentication);
+        Address address = findByIdAndUser(id, user.getId());
 
         address.setStreet(dto.getStreet());
         address.setNumber(dto.getNumber());
@@ -62,8 +59,24 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public void delete(Long id) {
-        Address address = findById(id);
+    public void delete(Long id, Authentication authentication) {
+        User user = getAuthenticatedUser(authentication);
+        Address address = findByIdAndUser(id, user.getId());
         addressRepository.delete(address);
+    }
+
+    private User getAuthenticatedUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario nao autenticado");
+        }
+
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario autenticado nao encontrado"));
+    }
+
+    private Address findByIdAndUser(Long id, Long userId) {
+        return addressRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereco nao encontrado"));
     }
 }
